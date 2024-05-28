@@ -107,8 +107,7 @@ func (bst *Tree) DeleteNode(val int) { // Function for deleting a node in a bst
 func deleteNode(root *Tnode, val int) *Tnode {
 	if root == nil {
 		return nil
-	}
-	if val < root.val {
+	} else if val < root.val {
 		root.left = deleteNode(root.left, val)
 		if getBf(root) < -1 { // Tree may have a right imbalance after deleting value from left subtree
 			if getBf(root.right) <= 0 { // Determines if the deleted node caused a RR imbalance or an RL imbalance
@@ -118,8 +117,7 @@ func deleteNode(root *Tnode, val int) *Tnode {
 				root = leftRotate(root)
 			}
 		}
-	}
-	if val > root.val {
+	} else if val > root.val {
 		root.right = deleteNode(root.right, val)
 		if getBf(root) > 1 { // Tree may have a left imbalance after deleting value from right subtree
 			if getBf(root.left) >= 0 { // Determines if the deleted node caused a LL imbalance or an LR imbalance
@@ -138,23 +136,25 @@ func deleteNode(root *Tnode, val int) *Tnode {
 			temp := root.left
 			root = nil
 			return temp
-		}
-		temp := findSmallest(root.right)              // Updating value of root node to the smallest value from right sub tree
-		root.val = temp.val                           // so that bst tree property is maintained.
-		root.right = deleteNode(root.right, temp.val) // Deleting smallest node from right-sub tree
-		if getBf(root) > 1 {                          // Tree may have a left imbalance after deleting value from right subtree
-			if val < root.left.val {
-				root = rightRotate(root)
-			} else {
-				root.left = leftRotate(root.left)
-				root = rightRotate(root)
+		} else {
+			temp := findSmallest(root.right)              // Updating value of root node to the smallest value from right sub tree
+			root.val = temp.val                           // so that bst tree property is maintained.
+			root.right = deleteNode(root.right, temp.val) // Deleting smallest node from right-sub tree
+			if getBf(root) > 1 {                          // Tree may have a left imbalance after deleting value from right subtree
+				if getBf(root.left) >= 0 { // Determines if the deleted node caused a LL imbalance or an LR imbalance
+					root = rightRotate(root)
+				} else {
+					root.left = leftRotate(root.left)
+					root = rightRotate(root)
+				}
 			}
 		}
 	}
+	root.height = setHeight(root)
 	return root
 }
 
-func (bst *Tree) FindSmalles(root *Tnode) int {
+func (bst *Tree) FindSmallest() int {
 	return findSmallest(bst.root).val
 }
 
@@ -217,8 +217,5 @@ func postOrder(root *Tnode) {
 }
 
 func main() {
-	bst := Tree{}
-	bst.InsertNode(50)
-	bst.InsertNode(50)
-	print(bst.root.val)
+
 }
