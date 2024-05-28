@@ -88,7 +88,7 @@ func insertNode(root *Tnode, val int) *Tnode {
 	} else {
 		root.right = insertNode(root.right, val)
 		if getBf(root) < -1 { // Tree may have a right imbalance after inserting value into right subtree
-			if val > root.right.val { // Determines if the inserted node caused a RR imbalance or an RL imbalance
+			if val >= root.right.val { // Determines if the inserted node caused a RR imbalance or an RL imbalance
 				root = leftRotate(root)
 			} else {
 				root.right = rightRotate(root.right)
@@ -111,7 +111,7 @@ func deleteNode(root *Tnode, val int) *Tnode {
 	if val < root.val {
 		root.left = deleteNode(root.left, val)
 		if getBf(root) < -1 { // Tree may have a right imbalance after deleting value from left subtree
-			if val > root.right.val { // Determines if the deleted node caused a RR imbalance or an RL imbalance
+			if getBf(root.right) <= 0 { // Determines if the deleted node caused a RR imbalance or an RL imbalance
 				root = leftRotate(root)
 			} else {
 				root.right = rightRotate(root.right)
@@ -122,7 +122,7 @@ func deleteNode(root *Tnode, val int) *Tnode {
 	if val > root.val {
 		root.right = deleteNode(root.right, val)
 		if getBf(root) > 1 { // Tree may have a left imbalance after deleting value from right subtree
-			if val < root.left.val { // Determines if the deleted node caused a LL imbalance or an LR imbalance
+			if getBf(root.left) >= 0 { // Determines if the deleted node caused a LL imbalance or an LR imbalance
 				root = rightRotate(root)
 			} else {
 				root.left = leftRotate(root.left)
@@ -152,6 +152,10 @@ func deleteNode(root *Tnode, val int) *Tnode {
 		}
 	}
 	return root
+}
+
+func (bst *Tree) FindSmalles(root *Tnode) int {
+	return findSmallest(bst.root).val
 }
 
 func findSmallest(root *Tnode) *Tnode { // Function for finding the smallest node in a particular sub-tree
@@ -213,5 +217,8 @@ func postOrder(root *Tnode) {
 }
 
 func main() {
-
+	bst := Tree{}
+	bst.InsertNode(50)
+	bst.InsertNode(50)
+	print(bst.root.val)
 }
